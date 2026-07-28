@@ -26,8 +26,9 @@ RESTRICT="!test? ( test )"
 REQUIRED_USE="test? ( ghostscript )"
 
 DEPEND="
-	media-libs/libpng
 	media-libs/libjpeg-turbo:=
+	media-libs/libpng:=
+	virtual/zlib:=
 	x11-apps/rgb
 	x11-libs/libXpm
 "
