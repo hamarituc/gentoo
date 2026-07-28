@@ -54,24 +54,6 @@ PATCHES=(
 	"${FILESDIR}/${P}-imagemagick.patch"
 )
 
-sed_Imakefile() {
-	# see fig2dev/Imakefile for details
-	vars2subs="BINDIR=${EPREFIX}/usr/bin
-			MANDIR=${EPREFIX}/usr/share/man/man\$\(MANSUFFIX\)
-			XFIGLIBDIR=${EPREFIX}/usr/share/xfig
-			PNGINC=-I${EPREFIX}/usr/include/X11
-			XPMINC=-I${EPREFIX}/usr/include/X11
-			USEINLINE=-DUSE_INLINE
-			RGB=${EPREFIX}/usr/share/X11/rgb.txt
-			FIG2DEV_LIBDIR=${EPREFIX}/usr/share/fig2dev"
-
-	for variable in ${vars2subs} ; do
-		varname=${variable%%=*}
-		varval=${variable##*=}
-		sed -i "s:^\(XCOMM\)*[[:space:]]*${varname}[[:space:]]*=.*$:${varname} = ${varval}:" "$@" || die
-	done
-}
-
 src_unpack() {
 	if [[ ${PV} == 9999 ]]; then
 		git-r3_src_unpack
@@ -90,14 +72,10 @@ src_prepare() {
 }
 
 src_configure() {
-	# export IMAKECPP=${IMAKECPP:-${CHOST}-gcc -E}
-	# CC="$(tc-getBUILD_CC)" LD="$(tc-getLD)" xmkmf || die
 	econf --enable-transfig
 }
 
 src_compile() {
-	# emake CC="$(tc-getBUILD_CC)" LD="$(tc-getLD)" Makefiles
-
 	local myemakeargs=(
 		CC="$(tc-getCC)"
 		AR="$(tc-getAR)"
@@ -123,9 +101,4 @@ src_install() {
 	einstalldocs
 
 	rm "${ED}/usr/share/doc/${PF}/html/"{Makefile,*.lfig,*.pdf,*.tex} || die
-}
-
-pkg_postinst() {
-	elog "Note, that defaults are changed and now if you don't want to ship"
-	elog "personal information into output files, use fig2dev with -a option."
 }
